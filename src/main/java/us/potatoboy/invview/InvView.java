@@ -22,15 +22,11 @@ import java.io.FileOutputStream;
 
 public class InvView implements ModInitializer {
     private static MinecraftServer minecraftServer;
-    public static boolean isTrinkets = false;
     public static boolean isLuckPerms = false;
-    public static boolean isApoli = false;
 
     @Override
     public void onInitialize() {
-        isTrinkets = FabricLoader.getInstance().isModLoaded("trinkets");
         isLuckPerms = FabricLoader.getInstance().isModLoaded("luckperms");
-        isApoli = FabricLoader.getInstance().isModLoaded("apoli");
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 
@@ -53,30 +49,9 @@ public class InvView implements ModInitializer {
                             .executes(ViewCommand::eChest))
                     .build();
 
-            LiteralCommandNode<ServerCommandSource> trinketNode = CommandManager
-                    .literal("trinket")
-                    .requires(Permissions.require("invview.command.trinket", 2))
-                    .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
-                            .executes(ViewCommand::trinkets))
-                    .build();
-
-            LiteralCommandNode<ServerCommandSource> apoliNode = CommandManager
-                    .literal("origin-inv")
-                    .requires(Permissions.require("invview.command.origin", 2))
-                    .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
-                            .executes(ViewCommand::apoli))
-                    .build();
-
             dispatcher.getRoot().addChild(viewNode);
             viewNode.addChild(invNode);
             viewNode.addChild(echestNode);
-
-            if (isTrinkets) {
-                viewNode.addChild(trinketNode);
-            }
-            if (isApoli) {
-                viewNode.addChild(apoliNode);
-            }
         });
 
         ServerLifecycleEvents.SERVER_STARTING.register(this::onLogicalServerStarting);
